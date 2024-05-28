@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -17,11 +18,21 @@ export default function Header() {
                 </button>
             </div>
             <ul className={`lg:flex justify-around p-5 text-white ${isOpen ? 'block' : 'hidden'}`}>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>Home</li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>Page1</li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>Page2</li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>Page3</li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>Page4</li>
+                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                    <Link href="/">Home</Link>
+                </li>
+                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                    <Link href="/topics">Topics</Link>
+                </li>
+                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                    <Link href="/page2">Page2</Link>
+                </li>
+                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                    <Link href="/page3">Page3</Link>
+                </li>
+                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                    <Link href="/page4">Page4</Link>
+                </li>
             </ul>
         </nav>
     );
