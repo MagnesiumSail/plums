@@ -6,6 +6,14 @@ import Link from 'next/link';
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
 
+    const navItems = [
+        { href: "/", label: "Home" },
+        { href: "/topics", label: "Topics" },
+        { href: "/page2", label: "Page2" },
+        { href: "/page3", label: "Page3" },
+        { href: "/page4", label: "Page4" },
+    ];
+
     return (
         <nav className="bg-purple-500 p-5">
             <div className="flex justify-between items-center">
@@ -18,21 +26,11 @@ export default function Header() {
                 </button>
             </div>
             <ul className={`lg:flex justify-around p-5 text-white ${isOpen ? 'block' : 'hidden'}`}>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
-                    <Link href="/">Home</Link>
-                </li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
-                    <Link href="/topics">Topics</Link>
-                </li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
-                    <Link href="/page2">Page2</Link>
-                </li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
-                    <Link href="/page3">Page3</Link>
-                </li>
-                <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
-                    <Link href="/page4">Page4</Link>
-                </li>
+                {navItems.map((item, index) => (
+                    <li key={index} className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                        <Link href={item.href}>{item.label}</Link>
+                    </li>
+                ))}
             </ul>
         </nav>
     );
