@@ -1,19 +1,23 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 
-const AddTopicForm = ({ onSubmit }) => {
-  const [topicTitle, setTopicTitle] = useState('');
-  const [topicDescription, setTopicDescription] = useState('');
+interface AddTopicFormProps {
+  onSubmit: (formData: { topicTitle: string; topicDescription: string }) => void;
+}
 
-  const handleSubmit = (event) => {
+const AddTopicForm: React.FC<AddTopicFormProps> = ({ onSubmit }) => {
+  const [topicTitle, setTopicTitle] = useState<string>('');
+  const [topicDescription, setTopicDescription] = useState<string>('');
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = { topicTitle, topicDescription };
     onSubmit(formData);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md  w-1/2 mx-auto">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-1/2 mx-auto">
       <div className="mb-4">
         <label htmlFor="topicTitle" className="block text-gray-700 font-bold mb-2">
           Topic Title
@@ -23,7 +27,7 @@ const AddTopicForm = ({ onSubmit }) => {
           id="topicTitle" 
           name="topicTitle" 
           value={topicTitle} 
-          onChange={(e) => setTopicTitle(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setTopicTitle(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />
@@ -36,7 +40,7 @@ const AddTopicForm = ({ onSubmit }) => {
           id="topicDescription" 
           name="topicDescription" 
           value={topicDescription} 
-          onChange={(e) => setTopicDescription(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setTopicDescription(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         ></textarea>

@@ -1,12 +1,16 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 
-const AddNoteForm = ({ onSubmit }) => {
-  const [noteTitle, setNoteTitle] = useState('');
-  const [noteContent, setNoteContent] = useState('');
+interface AddNoteFormProps {
+  onSubmit: (formData: { noteTitle: string; noteContent: string }) => void;
+}
 
-  const handleSubmit = (event) => {
+const AddNoteForm: React.FC<AddNoteFormProps> = ({ onSubmit }) => {
+  const [noteTitle, setNoteTitle] = useState<string>('');
+  const [noteContent, setNoteContent] = useState<string>('');
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = { noteTitle, noteContent };
     onSubmit(formData);
@@ -23,7 +27,7 @@ const AddNoteForm = ({ onSubmit }) => {
           id="noteTitle" 
           name="noteTitle" 
           value={noteTitle} 
-          onChange={(e) => setNoteTitle(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setNoteTitle(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />
@@ -36,7 +40,7 @@ const AddNoteForm = ({ onSubmit }) => {
           id="noteContent" 
           name="noteContent" 
           value={noteContent} 
-          onChange={(e) => setNoteContent(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setNoteContent(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         ></textarea>

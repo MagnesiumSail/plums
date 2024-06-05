@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 
-const AddAttachmentForm = ({ onSubmit }) => {
-  const [attachmentTitle, setAttachmentTitle] = useState('');
-  const [attachmentFile, setAttachmentFile] = useState(null);
+interface AddAttachmentFormProps {
+  onSubmit: (formData: FormData) => void;
+}
 
-  const handleSubmit = (event) => {
+const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({ onSubmit }) => {
+  const [attachmentTitle, setAttachmentTitle] = useState<string>('');
+  const [attachmentFile, setAttachmentFile] = useState<File | null>(null);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append('title', attachmentTitle);
-    formData.append('file', attachmentFile);
+    if (attachmentFile) {
+      formData.append('file', attachmentFile);
+    }
     onSubmit(formData);
   };
 
@@ -25,7 +31,7 @@ const AddAttachmentForm = ({ onSubmit }) => {
           id="attachmentTitle" 
           name="attachmentTitle" 
           value={attachmentTitle} 
-          onChange={(e) => setAttachmentTitle(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setAttachmentTitle(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />
@@ -38,7 +44,7 @@ const AddAttachmentForm = ({ onSubmit }) => {
           type="file" 
           id="attachmentFile" 
           name="attachmentFile" 
-          onChange={(e) => setAttachmentFile(e.target.files[0])} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setAttachmentFile(e.target.files?.[0] || null)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />

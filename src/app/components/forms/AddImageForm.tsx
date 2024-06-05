@@ -1,16 +1,22 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, FormEvent, ChangeEvent } from 'react';
 
-const AddImageForm = ({ onSubmit }) => {
-  const [imageTitle, setImageTitle] = useState('');
-  const [imageFile, setImageFile] = useState(null);
+interface AddImageFormProps {
+  onSubmit: (formData: FormData) => void;
+}
 
-  const handleSubmit = (event) => {
+const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
+  const [imageTitle, setImageTitle] = useState<string>('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData();
     formData.append('title', imageTitle);
-    formData.append('file', imageFile);
+    if (imageFile) {
+      formData.append('file', imageFile);
+    }
     onSubmit(formData);
   };
 
@@ -25,7 +31,7 @@ const AddImageForm = ({ onSubmit }) => {
           id="imageTitle" 
           name="imageTitle" 
           value={imageTitle} 
-          onChange={(e) => setImageTitle(e.target.value)} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setImageTitle(e.target.value)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />
@@ -38,7 +44,7 @@ const AddImageForm = ({ onSubmit }) => {
           type="file" 
           id="imageFile" 
           name="imageFile" 
-          onChange={(e) => setImageFile(e.target.files[0])} 
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setImageFile(e.target.files?.[0] || null)} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />

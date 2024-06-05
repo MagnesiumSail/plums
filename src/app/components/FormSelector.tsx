@@ -1,38 +1,38 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent } from 'react';
 import AddTopicForm from './forms/AddTopicForm';
 import AddNoteForm from './forms/AddNoteForm';
 import AddAttachmentForm from './forms/AddAttachmentForm';
 import AddImageForm from './forms/AddImageForm';
 
-const FormSelector = () => {
-  const [selectedForm, setSelectedForm] = useState('');
+const FormSelector: React.FC = () => {
+  const [selectedForm, setSelectedForm] = useState<string>('');
 
-  const handleFormSelection = (event) => {
+  const handleFormSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedForm(event.target.value);
   };
 
-const handleFormSubmit = (formData) => {
-console.log('Form submitted with data:', formData);
-};
+  const handleFormSubmit = (formData: any) => {
+    console.log('Form submitted with data:', formData);
+  };
 
-const renderForm = () => {
-switch (selectedForm) {
-    case 'addTopic':
+  const renderForm = () => {
+    switch (selectedForm) {
+      case 'addTopic':
         return <AddTopicForm onSubmit={handleFormSubmit} />;
-    case 'addNote':
+      case 'addNote':
         return <AddNoteForm onSubmit={handleFormSubmit} />;
-    case 'addAttachment':
+      case 'addAttachment':
         return <AddAttachmentForm onSubmit={handleFormSubmit} />;
-    case 'addImage':
+      case 'addImage':
         return <AddImageForm onSubmit={handleFormSubmit} />;
-    default:
+      default:
         return null;
     }
-};
+  };
 
-return (
+  return (
     <div className='flex flex-col items-center'>
       <div className="mb-4">
         <label htmlFor="formSelect" className="block text-lg font-medium m-2 text-center">
@@ -40,7 +40,7 @@ return (
         </label>
         <select
           id="formSelect"
-          className="w-full  border border-gray-300 rounded-lg p-2"
+          className="w-full border border-gray-300 rounded-lg p-2"
           onChange={handleFormSelection}
           value={selectedForm}
         >
