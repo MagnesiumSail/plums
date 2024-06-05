@@ -13,7 +13,7 @@ const AddTopicForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md  w-1/2 mx-auto">
       <div className="mb-4">
         <label htmlFor="topicTitle" className="block text-gray-700 font-bold mb-2">
           Topic Title

@@ -12,7 +12,6 @@ export default function TopicsLayout({
 }) {
   return (
     <div>
-      <FormSelector />
       {children}
     </div>
   );
