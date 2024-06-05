@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from 'next/link';
+import FormSelector from "../components/FormSelector";
 
 export default function Home() {
   return (
@@ -7,6 +9,14 @@ export default function Home() {
       <section>
         <h1 className="text-2xl font-bold mb-4">Course Topics</h1>
         <div className="space-y-4">
+          {/*Selection to add something new which will bring to the selection page generating the appropriate form */}
+          <div className="bg-gray-100 rounded-lg shadow px-4 py-2">
+          <Link href="/topics/add">
+              <button className="w-full text-left text-lg font-semibold py-2 focus:outline-none">
+                Add New ...
+              </button>
+          </Link>
+          </div>
           {/* Each topic as a dropdown */}
           <div className="bg-gray-100 rounded-lg shadow px-4 py-2">
             <button
