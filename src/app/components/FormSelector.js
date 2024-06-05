@@ -34,8 +34,8 @@ switch (selectedForm) {
 
 return (
     <div>
-      <div className="mb-4">
-        <label htmlFor="formSelect" className="block text-lg font-medium mb-2">
+      <div className="mb-4 w-2/3 m-auto">
+        <label htmlFor="formSelect" className="block text-lg font-medium m-2">
           Select Item Type
         </label>
         <select

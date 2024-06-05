@@ -1,4 +1,5 @@
 import Image from "next/image";
+import FormSelector from "../components/FormSelector";
 
 export default function Home() {
   return (
