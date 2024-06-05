@@ -15,7 +15,7 @@ const AddAttachmentForm = ({ onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-1/2 mx-auto">
+    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
       <div className="mb-4">
         <label htmlFor="attachmentTitle" className="block text-gray-700 font-bold mb-2">
           Attachment Title
