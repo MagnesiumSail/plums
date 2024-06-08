@@ -2,9 +2,12 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { signOut, useSession } from 'next-auth/react';
 
 export default function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const { data: session, status } = useSession();
+    const loading = status === 'loading';
 
     const navItems = [
         { href: "/", label: "Home" },
@@ -31,6 +34,13 @@ export default function Header() {
                         <Link href={item.href}>{item.label}</Link>
                     </li>
                 ))}
+                {!loading && session && (
+                    <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
+                        <button onClick={() => signOut({ callbackUrl: '/' })} className="text-white">
+                            Sign Out
+                        </button>
+                    </li>
+                )}
             </ul>
         </nav>
     );

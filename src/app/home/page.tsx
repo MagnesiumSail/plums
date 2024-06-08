@@ -1,9 +1,26 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
+
+const HomeSignedInPage: React.FC = () => {
+  const { data: session, status } = useSession();
+  const loading = status === 'loading';
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !session) {
+      router.push('/');
+    }
+  }, [loading, session, router]);
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <main>
-      {/* Hero Section */}
       <section
         className="bg-cover bg-center h-96 text-black py-24 px-8"
         style={{ backgroundImage: "url('your-hero-image.jpg')" }}
@@ -15,16 +32,9 @@ export default function Home() {
           <p className="text-xl mt-4 text-center">
             Join our community of learners and gain access to premium courses.
           </p>
-          <a
-            href="/signup"
-            className="mt-8 bg-green-500 hover:bg-green-600 text-black font-bold py-2 px-4 rounded"
-          >
-            Get Started
-          </a>
         </div>
       </section>
 
-      {/* Overview Section */}
       <section className="container mx-auto text-center py-12">
         <h2 className="text-3xl font-semibold">What We Offer</h2>
         <p className="text-gray-600 mt-4 mb-8">
@@ -53,8 +63,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Call to Action Section */}
-      <section className="bg-green-500 text-white py-12">
+      <section className="bg-purple-500 text-white py-12">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold">Ready to Start?</h2>
           <p className="text-xl mt-4">
@@ -62,7 +71,7 @@ export default function Home() {
           </p>
           <a
             href="/register"
-            className="mt-8 inline-block bg-white text-green-500 hover:bg-gray-100 font-bold py-2 px-4 rounded"
+            className="mt-8 inline-block bg-white text-purple-500 hover:bg-gray-100 font-bold py-2 px-4 rounded"
           >
             Sign Up Now
           </a>
@@ -70,4 +79,6 @@ export default function Home() {
       </section>
     </main>
   );
-}
+};
+
+export default HomeSignedInPage;

@@ -2,10 +2,18 @@
 
 import React, { useEffect } from 'react';
 
-export default function Footer() {
+const Footer: React.FC = () => {
     useEffect(() => {
-        document.getElementById('currentyear').textContent = new Date().getFullYear();
-        document.getElementById('lastModified').textContent = "Last Modification: " + document.lastModified;
+        const currentYearElement = document.getElementById('currentyear');
+        const lastModifiedElement = document.getElementById('lastModified');
+        
+        if (currentYearElement) {
+            currentYearElement.textContent = new Date().getFullYear().toString();
+        }
+        
+        if (lastModifiedElement) {
+            lastModifiedElement.textContent = "Last Modification: " + document.lastModified;
+        }
     }, []);
 
     return (
@@ -15,3 +23,5 @@ export default function Footer() {
         </footer>
     );
 }
+
+export default Footer;
