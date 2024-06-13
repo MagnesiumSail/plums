@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Topic {
+  id          String   @id @default(cuid()) @map("_id")
+  title       String
+  description String?
+  notes       Note[]
+  images      Image[]
+  attachments Attachment[]
+
+  @@map("topics")
+}
+
+model Note {
+  id       String @id @default(cuid()) @map("_id")
+  content  String
+  topicId  String
+  topic    Topic  @relation(fields: [topicId], references: [id])
+
+  @@map("notes")
+}
+
+model Image {
+  id          String @id @default(cuid()) @map("_id")
+  url         String
+  description String?
+  topicId     String
+  topic       Topic  @relation(fields: [topicId], references: [id])
+
+  @@map("images")
+}
+
+model Attachment {
+  id          String @id @default(cuid()) @map("_id")
+  fileName    String
+  fileUrl     String
+  description String?
+  topicId     String
+  topic       Topic  @relation(fields: [topicId], references: [id])
+
+  @@map("attachments")
+}
