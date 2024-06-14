@@ -1,26 +1,29 @@
 'use client';
 
-import { useSession, signOut } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import { useSession } from 'next-auth/react';
+import React, { useEffect, useState } from 'react';
+import Image from "next/image";
 
-const HomeSignedInPage: React.FC = () => {
+const HomePage: React.FC = () => {
   const { data: session, status } = useSession();
-  const loading = status === 'loading';
-  const router = useRouter();
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (!loading && !session) {
-      router.push('/');
+    if (session && !localStorage.getItem('loggedIn')) {
+      setShowAlert(true);
+      localStorage.setItem('loggedIn', 'true');
+      const timer = setTimeout(() => setShowAlert(false), 4000); 
+      return () => clearTimeout(timer); 
     }
-  }, [loading, session, router]);
-
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  }, [session]);
 
   return (
     <main>
+      {showAlert && (
+        <div className="fixed top-40 left-0 right-0 bg-purple-900 text-white text-center text-xl py-3 w-1/3 m-auto">
+          Welcome, {session?.user?.name}!
+        </div>
+      )}
       <section
         className="bg-cover bg-center h-96 text-black py-24 px-8"
         style={{ backgroundImage: "url('your-hero-image.jpg')" }}
@@ -32,9 +35,14 @@ const HomeSignedInPage: React.FC = () => {
           <p className="text-xl mt-4 text-center">
             Join our community of learners and gain access to premium courses.
           </p>
+          <a
+            href="/signup"
+            className="mt-8 bg-purple-500 hover:bg-purple-600 text-black font-bold py-2 px-4 rounded"
+          >
+            Get Started
+          </a>
         </div>
       </section>
-
       <section className="container mx-auto text-center py-12">
         <h2 className="text-3xl font-semibold">What We Offer</h2>
         <p className="text-gray-600 mt-4 mb-8">
@@ -62,7 +70,6 @@ const HomeSignedInPage: React.FC = () => {
           </div>
         </div>
       </section>
-
       <section className="bg-purple-500 text-white py-12">
         <div className="container mx-auto text-center">
           <h2 className="text-3xl font-bold">Ready to Start?</h2>
@@ -71,7 +78,7 @@ const HomeSignedInPage: React.FC = () => {
           </p>
           <a
             href="/register"
-            className="mt-8 inline-block bg-white text-purple-500 hover:bg-gray-100 font-bold py-2 px-4 rounded"
+            className="mt-8 inline-block bg-purple-800 text-white hover:bg-purple-700 text-white font-bold py-2 px-4 rounded"
           >
             Sign Up Now
           </a>
@@ -81,4 +88,4 @@ const HomeSignedInPage: React.FC = () => {
   );
 };
 
-export default HomeSignedInPage;
+export default HomePage;
