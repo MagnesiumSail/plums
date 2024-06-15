@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, ChangeEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import AddTopicForm from './forms/AddTopicForm';
 import AddNoteForm from './forms/AddNoteForm';
 import AddAttachmentForm from './forms/AddAttachmentForm';
@@ -8,13 +9,51 @@ import AddImageForm from './forms/AddImageForm';
 
 const FormSelector: React.FC = () => {
   const [selectedForm, setSelectedForm] = useState<string>('');
+  const router = useRouter();
 
   const handleFormSelection = (event: ChangeEvent<HTMLSelectElement>) => {
     setSelectedForm(event.target.value);
   };
 
-  const handleFormSubmit = (formData: any) => {
-    console.log('Form submitted with data:', formData);
+  const handleFormSubmit = async (formData: any) => {
+    console.log('Submitting form with data:', formData);
+
+    let apiEndpoint = '';
+    switch (selectedForm) {
+      case 'addTopic':
+        apiEndpoint = '/api/topics';
+        break;
+      case 'addNote':
+        apiEndpoint = '/api/notes';
+        break;
+      case 'addAttachment':
+        apiEndpoint = '/api/attachments';
+        break;
+      case 'addImage':
+        apiEndpoint = '/api/images';
+        break;
+      default:
+        return;
+    }
+
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        console.log('Form submitted successfully');
+        router.push('/topics?success=true');
+      } else {
+        console.error('Failed to add item');
+      }
+    } catch (error) {
+      console.error('Error adding item:', error);
+    }
   };
 
   const renderForm = () => {

@@ -26,9 +26,10 @@ model Topic {
 
 model Note {
   id       String @id @default(cuid()) @map("_id")
+  title    String
   content  String
-  topicId  String
-  topic    Topic  @relation(fields: [topicId], references: [id])
+  topicId  String?
+  topic    Topic?  @relation(fields: [topicId], references: [id])
 
   @@map("notes")
 }

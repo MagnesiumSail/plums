@@ -3,16 +3,17 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 
 interface AddNoteFormProps {
-  onSubmit: (formData: { noteTitle: string; noteContent: string }) => void;
+  onSubmit: (formData: { title: string; noteContent: string; topicId?: string }) => void;
+  topicId?: string; 
 }
 
-const AddNoteForm: React.FC<AddNoteFormProps> = ({ onSubmit }) => {
+const AddNoteForm: React.FC<AddNoteFormProps> = ({ onSubmit, topicId }) => {
   const [noteTitle, setNoteTitle] = useState<string>('');
   const [noteContent, setNoteContent] = useState<string>('');
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = { noteTitle, noteContent };
+    const formData = { title: noteTitle, noteContent, topicId };
     onSubmit(formData);
   };
 
