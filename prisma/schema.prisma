@@ -39,7 +39,7 @@ model Image {
   url         String
   description String?
   topicId     String?
-  topic       Topic  @relation(fields: [topicId], references: [id])
+  topic       Topic?  @relation(fields: [topicId], references: [id])
 
   @@map("images")
 }
@@ -50,7 +50,7 @@ model Attachment {
   fileUrl     String
   description String?
   topicId     String?
-  topic       Topic  @relation(fields: [topicId], references: [id])
+  topic       Topic?  @relation(fields: [topicId], references: [id])
 
   @@map("attachments")
 }
