@@ -3,21 +3,34 @@
 import React, { useState, FormEvent, ChangeEvent } from 'react';
 
 interface AddImageFormProps {
-  onSubmit: (formData: FormData) => void;
+  onSubmit: (formData: { name: string; description: string; image: string }) => void;
 }
 
 const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
   const [imageTitle, setImageTitle] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [description, setDescription] = useState<string>('');
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] || null;
+    setImageFile(file);
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append('title', imageTitle);
-    if (imageFile) {
-      formData.append('file', imageFile);
-    }
-    onSubmit(formData);
+    if (!imageFile) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result as string;
+      const formData = {
+        name: imageTitle,
+        description,
+        image: base64String,
+      };
+      onSubmit(formData);
+    };
+    reader.readAsDataURL(imageFile);
   };
 
   return (
@@ -37,6 +50,19 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
         />
       </div>
       <div className="mb-4">
+        <label htmlFor="description" className="block text-gray-700 font-bold mb-2">
+          Description
+        </label>
+        <textarea 
+          id="description" 
+          name="description" 
+          value={description} 
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} 
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          required 
+        />
+      </div>
+      <div className="mb-4">
         <label htmlFor="imageFile" className="block text-gray-700 font-bold mb-2">
           Upload Image
         </label>
@@ -44,7 +70,7 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
           type="file" 
           id="imageFile" 
           name="imageFile" 
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setImageFile(e.target.files?.[0] || null)} 
+          onChange={handleFileChange} 
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           required 
         />

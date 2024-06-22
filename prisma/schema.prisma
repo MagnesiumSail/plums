@@ -36,6 +36,7 @@ model Note {
 
 model Image {
   id          String @id @default(cuid()) @map("_id")
+  name       String
   url         String
   description String?
   topicId     String?
