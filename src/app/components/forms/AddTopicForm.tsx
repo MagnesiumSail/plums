@@ -1,56 +1,66 @@
-"use client";
-
-import React, { useState, FormEvent, ChangeEvent } from 'react';
+import React, { useState, FormEvent } from 'react';
+import CustomSelect from '../CustomSelect';
 
 interface AddTopicFormProps {
-  onSubmit: (formData: { topicTitle: string; topicDescription: string }) => void;
+  topics: { id: string; title: string }[];
+  onSubmit: (formData: { title: string; description: string; parentId?: string }) => void;
 }
 
-const AddTopicForm: React.FC<AddTopicFormProps> = ({ onSubmit }) => {
-  const [topicTitle, setTopicTitle] = useState<string>('');
-  const [topicDescription, setTopicDescription] = useState<string>('');
+const AddTopicForm: React.FC<AddTopicFormProps> = ({ topics, onSubmit }) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [parentId, setParentId] = useState<string | undefined>(undefined);
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
-    const formData = { topicTitle, topicDescription };
-    onSubmit(formData);
+    onSubmit({ title, description, parentId });
   };
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md w-1/2 mx-auto">
+    <form onSubmit={handleSubmit} className="w-full max-w-lg">
       <div className="mb-4">
-        <label htmlFor="topicTitle" className="block text-gray-700 font-bold mb-2">
-          Topic Title
+        <label htmlFor="title" className="block text-lg font-medium m-2">
+          Title
         </label>
-        <input 
-          type="text" 
-          id="topicTitle" 
-          name="topicTitle" 
-          value={topicTitle} 
-          onChange={(e: ChangeEvent<HTMLInputElement>) => setTopicTitle(e.target.value)} 
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required 
+        <input
+          id="title"
+          type="text"
+          className="w-full border border-gray-300 rounded-lg p-2"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          required
         />
       </div>
+
       <div className="mb-4">
-        <label htmlFor="topicDescription" className="block text-gray-700 font-bold mb-2">
+        <label htmlFor="description" className="block text-lg font-medium m-2">
           Description
         </label>
-        <textarea 
-          id="topicDescription" 
-          name="topicDescription" 
-          value={topicDescription} 
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setTopicDescription(e.target.value)} 
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          required 
+        <textarea
+          id="description"
+          className="w-full border border-gray-300 rounded-lg p-2"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          required
         ></textarea>
       </div>
-      <button 
-        type="submit" 
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-      >
-        Add Topic
-      </button>
+
+      <div className="mb-4">
+        <label htmlFor="parentId" className="block text-lg font-medium m-2">
+          Parent Topic
+        </label>
+        <CustomSelect
+          options={topics}
+          value={parentId || ''}
+          onChange={(value) => setParentId(value)}
+        />
+      </div>
+
+      <div className="mb-4">
+        <button type="submit" className="w-full bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+          Add Topic
+        </button>
+      </div>
     </form>
   );
 };

@@ -9,6 +9,7 @@ export async function POST(req: NextRequest) {
       fileName,
       fileUrl,
       description,
+      topicId
     };
 
     if (topicId) {
@@ -23,5 +24,15 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('Error creating attachment:', error);
     return NextResponse.json({ error: 'Error creating attachment' }, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const attachments = await prisma.attachment.findMany();
+    return NextResponse.json(attachments);
+  } catch (error) {
+    console.error('Error fetching attachments:', error);
+    return NextResponse.error();
   }
 }

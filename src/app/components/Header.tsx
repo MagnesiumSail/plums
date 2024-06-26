@@ -11,7 +11,7 @@ export default function Header() {
 
     const navItems = [
         { href: "/", label: "Home" },
-        { href: "/topics", label: "Topics" },
+        { href: "/topics", label: "Content" },
         { href: "/topics/add", label: "Add New" },
         { href: "/page3", label: "Page3" },
         { href: "/page4", label: "Page4" },

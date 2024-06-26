@@ -1,48 +1,61 @@
 "use client";
 
-import React, { useState, ChangeEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AddTopicForm from './forms/AddTopicForm';
 import AddNoteForm from './forms/AddNoteForm';
 import AddAttachmentForm from './forms/AddAttachmentForm';
 import AddImageForm from './forms/AddImageForm';
+import CustomSelect from './CustomSelect';
 
 const FormSelector: React.FC = () => {
   const [selectedForm, setSelectedForm] = useState<string>('');
+  const [selectedTopicId, setSelectedTopicId] = useState<string>('');
+  const [topics, setTopics] = useState([]);
   const router = useRouter();
 
-  const handleFormSelection = (event: ChangeEvent<HTMLSelectElement>) => {
-    setSelectedForm(event.target.value);
+  useEffect(() => {
+    async function fetchTopics() {
+      const response = await fetch('/api/topics');
+      const data = await response.json();
+      setTopics(data);
+    }
+
+    fetchTopics();
+  }, []);
+
+  const handleFormSelection = (value: string) => {
+    setSelectedForm(value);
+    setSelectedTopicId(''); 
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleTopicSelection = (value: string) => {
+    setSelectedTopicId(value);
+  };
+
+  const handleFormSubmit = async (formData: any, topicId?: string) => {
     console.log('Submitting form with data:', formData);
 
-    let apiEndpoint = '';
-    switch (selectedForm) {
-      case 'addTopic':
-        apiEndpoint = '/api/topics';
-        break;
-      case 'addNote':
-        apiEndpoint = '/api/notes';
-        break;
-      case 'addAttachment':
-        apiEndpoint = '/api/attachments';
-        break;
-      case 'addImage':
-        apiEndpoint = '/api/images';
-        break;
-      default:
-        return;
+    let apiEndpoint = '/api/topics';
+    let method = 'POST';
+    let body = JSON.stringify(formData);
+
+    if (selectedForm !== 'addTopic') {
+      apiEndpoint = `/api/${selectedForm.replace('add', '').toLowerCase()}`;
+      method = 'POST';
+      body = JSON.stringify({
+        ...formData,
+        topicId: topicId || selectedTopicId,
+      });
     }
 
     try {
       const response = await fetch(apiEndpoint, {
-        method: 'POST',
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body,
       });
 
       if (response.ok) {
@@ -59,13 +72,13 @@ const FormSelector: React.FC = () => {
   const renderForm = () => {
     switch (selectedForm) {
       case 'addTopic':
-        return <AddTopicForm onSubmit={handleFormSubmit} />;
+        return <AddTopicForm topics={topics} onSubmit={handleFormSubmit} />;
       case 'addNote':
-        return <AddNoteForm onSubmit={handleFormSubmit} />;
+        return <AddNoteForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       case 'addAttachment':
-        return <AddAttachmentForm onSubmit={handleFormSubmit} />;
+        return <AddAttachmentForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       case 'addImage':
-        return <AddImageForm onSubmit={handleFormSubmit} />;
+        return <AddImageForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       default:
         return null;
     }
@@ -77,19 +90,31 @@ const FormSelector: React.FC = () => {
         <label htmlFor="formSelect" className="block text-lg font-medium m-2 text-center">
           Select Item Type
         </label>
-        <select
-          id="formSelect"
-          className="w-full border border-gray-300 rounded-lg p-2"
+        <CustomSelect
+          options={[
+            { id: 'addTopic', title: 'Add Topic' },
+            { id: 'addNote', title: 'Add Note' },
+            { id: 'addAttachment', title: 'Add Attachment' },
+            { id: 'addImage', title: 'Add Image' },
+          ]}
           onChange={handleFormSelection}
           value={selectedForm}
-        >
-          <option value="">-- Select --</option>
-          <option value="addTopic">Add Topic</option>
-          <option value="addNote">Add Note</option>
-          <option value="addAttachment">Add Attachment</option>
-          <option value="addImage">Add Image</option>
-        </select>
+        />
       </div>
+
+      {selectedForm !== 'addTopic' && selectedForm !== '' && (
+        <div className="mb-4 m-2 p-">
+          <label htmlFor="topicSelect" className="block text-lg font-medium m-2 text-center">
+            Select Topic
+          </label>
+          <CustomSelect
+            options={topics.map(topic => ({ id: topic.id, title: topic.title }))}
+            onChange={handleTopicSelection}
+            value={selectedTopicId}
+          />
+        </div>
+      )}
+
       {renderForm()}
     </div>
   );

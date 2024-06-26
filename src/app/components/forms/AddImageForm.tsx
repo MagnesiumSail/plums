@@ -45,7 +45,7 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
           name="imageTitle" 
           value={imageTitle} 
           onChange={(e: ChangeEvent<HTMLInputElement>) => setImageTitle(e.target.value)} 
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           required 
         />
       </div>
@@ -58,7 +58,7 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
           name="description" 
           value={description} 
           onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)} 
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           required 
         />
       </div>
@@ -71,13 +71,13 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit }) => {
           id="imageFile" 
           name="imageFile" 
           onChange={handleFileChange} 
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
           required 
         />
       </div>
       <button 
         type="submit" 
-        className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        className="bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-pruple-500 focus:ring-opacity-50"
       >
         Add Image
       </button>

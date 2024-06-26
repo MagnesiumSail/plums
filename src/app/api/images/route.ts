@@ -3,7 +3,7 @@ import { prisma } from '../../../../lib/db';
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, description, image } = await req.json();
+    const { name, description, image, topicId } = await req.json();
 
     if (!name || !description || !image) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
         name,
         url: image, 
         description,
+        topicId,
       },
     });
 
@@ -23,3 +24,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+    try {
+      const images = await prisma.image.findMany();
+      return NextResponse.json(images);
+    } catch (error) {
+      console.error('Error fetching images:', error);
+      return NextResponse.error();
+    }
+  }

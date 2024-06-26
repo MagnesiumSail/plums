@@ -30,3 +30,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Error creating note', error: error.message }, { status: 500 });
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const notes = await prisma.note.findMany();
+    return NextResponse.json(notes);
+  } catch (error) {
+    console.error('Error fetching notes:', error);
+    return NextResponse.error();
+  }
+}
