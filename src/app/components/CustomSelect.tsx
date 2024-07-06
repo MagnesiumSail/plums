@@ -7,7 +7,7 @@ interface CustomSelectProps {
   value: string;
 }
 
-const CustomSelect: React.FC<CustomSelectProps> = ({ options = [], onChange, value }) => {
+const CustomSelect: React.FC<CustomSelectProps> = ({ options, onChange, value }) => {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef(null);
 
@@ -28,7 +28,7 @@ const CustomSelect: React.FC<CustomSelectProps> = ({ options = [], onChange, val
         {options.find(option => option.id === value)?.title || '-- Select --'}
       </button>
       {isOpen && (
-        <ul className="absolute z-10 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+        <ul className="absolute z-10 mt-2 w- bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
           {options.map(option => (
             <li
               key={option.id}

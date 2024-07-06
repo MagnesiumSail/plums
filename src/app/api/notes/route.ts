@@ -3,15 +3,15 @@ import { prisma } from '../../../../lib/db';
 
 export async function POST(req: NextRequest) {
   try {
-    const { title, noteContent, topicId } = await req.json();
+    const { title, content, topicId } = await req.json();
 
-    if (!title || !noteContent) {
+    if (!title || !content) {
       throw new Error('Title and content are required');
     }
 
     const newNoteData: any = {
       title,
-      content: noteContent,
+      content,
     };
 
     if (topicId) {

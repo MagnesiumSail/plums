@@ -26,7 +26,7 @@ const FormSelector: React.FC = () => {
 
   const handleFormSelection = (value: string) => {
     setSelectedForm(value);
-    setSelectedTopicId(''); 
+    setSelectedTopicId('');
   };
 
   const handleTopicSelection = (value: string) => {
@@ -41,7 +41,7 @@ const FormSelector: React.FC = () => {
     let body = JSON.stringify(formData);
 
     if (selectedForm !== 'addTopic') {
-      apiEndpoint = `/api/${selectedForm.replace('add', '').toLowerCase()}`;
+      apiEndpoint = `/api/${selectedForm.replace('add', '').toLowerCase()}s`;
       method = 'POST';
       body = JSON.stringify({
         ...formData,

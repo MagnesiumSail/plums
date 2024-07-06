@@ -1,14 +1,20 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CustomSelect from '../../components/CustomSelect';
+import Modal from '../../components/Modal';
 
 export default function TopicDetails() {
   const { id } = useParams();
+  const router = useRouter();
   const [topic, setTopic] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('notes');
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
 
   useEffect(() => {
     async function fetchTopic() {
@@ -18,56 +24,162 @@ export default function TopicDetails() {
     }
 
     fetchTopic();
+
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get('success') === 'true') {
+      setShowSuccessMessage(true);
+      setTimeout(() => setShowSuccessMessage(false), 3000); 
+    }
   }, [id]);
 
   if (!topic) {
     return <div>Loading...</div>;
   }
 
-  const categories = [
-    { id: 'notes', title: 'Notes' },
-    { id: 'images', title: 'Images' },
-    { id: 'attachments', title: 'Attachments' }
-  ];
+  const handleItemClick = (item) => {
+    setSelectedItem(item);
+    setIsEditing(false);
+    setIsModalOpen(true);
+  };
+
+  const handleItemUpdate = (item) => {
+    setSelectedItem(item);
+    setIsEditing(true);
+    setIsModalOpen(true);
+  };
+
+  const handleItemDelete = async (item) => {
+    const confirmDelete = confirm("Are you sure you want to delete this item?");
+    if (!confirmDelete) return;
+
+    const apiEndpoint = `/api/${selectedCategory}/${item.id}`;
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        console.log('Item deleted successfully');
+        setTopic(prevTopic => ({
+          ...prevTopic,
+          [selectedCategory]: prevTopic[selectedCategory].filter(i => i.id !== item.id),
+        }));
+        setIsModalOpen(false);
+      } else {
+        console.error('Failed to delete item');
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+    }
+  };
+
+  const handleFormSubmit = async (formData) => {
+    const apiEndpoint = `/api/${selectedCategory}/${selectedItem.id}`;
+    try {
+      const response = await fetch(apiEndpoint, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const updatedItem = await response.json();
+        setTopic(prevTopic => ({
+          ...prevTopic,
+          [selectedCategory]: prevTopic[selectedCategory].map(i => i.id === updatedItem.id ? updatedItem : i),
+        }));
+        setIsModalOpen(false);
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+      } else {
+        console.error('Failed to update item');
+      }
+    } catch (error) {
+      console.error('Error updating item:', error);
+    }
+  };
 
   const renderContent = () => {
+    if (!topic || !topic[selectedCategory]) {
+      return null;
+    }
+
     switch (selectedCategory) {
       case 'notes':
         return (
           <>
             <h2 className="text-xl font-bold mb-2">Notes</h2>
-            <ul className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-4/5">
               {topic.notes.map(note => (
-                <li key={note.id}>{note.title}: {note.content}</li>
+                <div key={note.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
+                  <h3 className="text-lg font-bold">{note.title}</h3>
+                  <button
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    onClick={() => handleItemUpdate(note)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-red-500 text-white py-1 px-2 rounded mt-2 ml-2"
+                    onClick={() => handleItemDelete(note)}
+                  >
+                    Delete
+                  </button>
+                </div>
               ))}
-            </ul>
+            </div>
           </>
         );
       case 'images':
         return (
           <>
             <h2 className="text-xl font-bold mb-2">Images</h2>
-            <ul className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-4/5">
               {topic.images.map(image => (
-                <li key={image.id}>
-                  <img src={image.url} alt={image.name} className="w-24 h-24 object-cover" />
-                  {image.name}: {image.description}
-                </li>
+                <div key={image.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
+                  <h3 className="text-lg font-bold">{image.name}</h3>
+                  <button
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    onClick={() => handleItemUpdate(image)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-red-500 text-white py-1 px-2 rounded mt-2 ml-2"
+                    onClick={() => handleItemDelete(image)}
+                  >
+                    Delete
+                  </button>
+                </div>
               ))}
-            </ul>
+            </div>
           </>
         );
       case 'attachments':
         return (
           <>
             <h2 className="text-xl font-bold mb-2">Attachments</h2>
-            <ul className="mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-4/5">
               {topic.attachments.map(attachment => (
-                <li key={attachment.id}>
-                  <a href={attachment.fileUrl} download>{attachment.fileName}</a>: {attachment.description}
-                </li>
+                <div key={attachment.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
+                  <h3 className="text-lg font-bold">{attachment.fileName}</h3>
+                  <button
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    onClick={() => handleItemUpdate(attachment)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-red-500 text-white py-1 px-2 rounded mt-2 ml-2"
+                    onClick={() => handleItemDelete(attachment)}
+                  >
+                    Delete
+                  </button>
+                </div>
               ))}
-            </ul>
+            </div>
           </>
         );
       default:
@@ -78,12 +190,23 @@ export default function TopicDetails() {
   return (
     <main className="container mx-auto py-8 px-4">
       <section>
+        {showSuccessMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong className="font-bold">Success!</strong>
+            <span className="block sm:inline"> The item was updated successfully.</span>
+          </div>
+        )}
+
         <h1 className="text-2xl font-bold mb-4">{topic.title}</h1>
         <p className="mb-4">{topic.description}</p>
 
         <label htmlFor="category" className="block mb-2 text-lg font-bold">Content</label>
         <CustomSelect
-          options={categories}
+          options={[
+            { id: 'notes', title: 'Notes' },
+            { id: 'images', title: 'Images' },
+            { id: 'attachments', title: 'Attachments' },
+          ]}
           value={selectedCategory}
           onChange={setSelectedCategory}
         />
@@ -96,6 +219,41 @@ export default function TopicDetails() {
           </a>
         </Link>
       </section>
+
+      {isModalOpen && (
+        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+          {selectedItem && (
+            <div className="p-4">
+              <h2 className="text-2xl font-bold mb-4">{selectedItem.title || selectedItem.name || selectedItem.fileName}</h2>
+              <p>{selectedItem.content || selectedItem.description || ''}</p>
+              {selectedItem.url && <img src={selectedItem.url} alt={selectedItem.name} className="w-full h-48 object-cover mb-2" />}
+              {selectedItem.fileUrl && <a href={selectedItem.fileUrl} download className="text-blue-500 underline">{selectedItem.fileName}</a>}
+              {isEditing && (
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  handleFormSubmit(selectedItem);
+                }}>
+                  <input
+                    type="text"
+                    value={selectedItem.title || selectedItem.name || selectedItem.fileName}
+                    onChange={(e) => setSelectedItem({ ...selectedItem, title: e.target.value })}
+                    className="w-full mb-4 p-2 border border-gray-300 rounded"
+                    required
+                  />
+                  <textarea
+                    value={selectedItem.content || selectedItem.description || ''}
+                    onChange={(e) => setSelectedItem({ ...selectedItem, content: e.target.value })}
+                    className="w-full mb-4 p-2 border border-gray-300 rounded"
+                    required
+                  />
+                  <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">Save</button>
+                  <button type="button" className="bg-gray-500 text-white py-2 px-4 rounded ml-2" onClick={() => setIsModalOpen(false)}>Cancel</button>
+                </form>
+              )}
+            </div>
+          )}
+        </Modal>
+      )}
     </main>
   );
 }
