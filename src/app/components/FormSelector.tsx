@@ -4,8 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AddTopicForm from './forms/AddTopicForm';
 import AddNoteForm from './forms/AddNoteForm';
-import AddAttachmentForm from './forms/AddAttachmentForm';
+import AddLinkForm from './forms/AddLinkForm';
 import AddImageForm from './forms/AddImageForm';
+import AddAttachmentForm from './forms/AddAttachmentForm';
 import CustomSelect from './CustomSelect';
 
 const FormSelector: React.FC = () => {
@@ -75,10 +76,12 @@ const FormSelector: React.FC = () => {
         return <AddTopicForm topics={topics} onSubmit={handleFormSubmit} />;
       case 'addNote':
         return <AddNoteForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
-      case 'addAttachment':
-        return <AddAttachmentForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
+      case 'addLink':
+        return <AddLinkForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       case 'addImage':
         return <AddImageForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
+      case 'addAttachment':
+        return <AddAttachmentForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       default:
         return null;
     }
@@ -94,8 +97,9 @@ const FormSelector: React.FC = () => {
           options={[
             { id: 'addTopic', title: 'Add Topic' },
             { id: 'addNote', title: 'Add Note' },
-            { id: 'addAttachment', title: 'Add Attachment' },
+            { id: 'addLink', title: 'Add Link' },
             { id: 'addImage', title: 'Add Image' },
+            { id: 'addAttachment', title: 'Add Attachment' },
           ]}
           onChange={handleFormSelection}
           value={selectedForm}
@@ -103,7 +107,7 @@ const FormSelector: React.FC = () => {
       </div>
 
       {selectedForm !== 'addTopic' && selectedForm !== '' && (
-        <div className="mb-4 m-2 p-">
+        <div className="mb-4 m-2">
           <label htmlFor="topicSelect" className="block text-lg font-medium m-2 text-center">
             Select Topic
           </label>

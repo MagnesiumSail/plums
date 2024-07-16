@@ -19,8 +19,13 @@ export default function TopicDetails() {
   useEffect(() => {
     async function fetchTopic() {
       const response = await fetch(`/api/topics/${id}`);
-      const data = await response.json();
-      setTopic(data);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Fetched topic:', data); 
+        setTopic(data);
+      } else {
+        console.error('Failed to fetch topic');
+      }
     }
 
     fetchTopic();
@@ -38,7 +43,6 @@ export default function TopicDetails() {
 
   const handleItemClick = (item) => {
     setSelectedItem(item);
-    setIsEditing(false);
     setIsModalOpen(true);
   };
 
@@ -157,23 +161,48 @@ export default function TopicDetails() {
             </div>
           </>
         );
-      case 'attachments':
+      case 'links':
         return (
           <>
-            <h2 className="text-xl font-bold mb-2">Attachments</h2>
+            <h2 className="text-xl font-bold mb-2">Links</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-4/5">
-              {topic.attachments.map(attachment => (
-                <div key={attachment.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
-                  <h3 className="text-lg font-bold">{attachment.fileName}</h3>
+              {topic.links.map(link => (
+                <div key={link.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
+                  <h3 className="text-lg font-bold">{link.fileUrl}</h3>
                   <button
                     className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
-                    onClick={() => handleItemUpdate(attachment)}
+                    onClick={() => handleItemUpdate(link)}
                   >
                     Update
                   </button>
                   <button
                     className="bg-red-500 text-white py-1 px-2 rounded mt-2 ml-2"
-                    onClick={() => handleItemDelete(attachment)}
+                    onClick={() => handleItemDelete(link)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        );
+      case 'children':
+        return (
+          <>
+            <h2 className="text-xl font-bold mb-2">Sub Topics</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-4/5">
+              {topic.children.map(subTopic => (
+                <div key={subTopic.id} className="bg-white shadow-md rounded-lg p-4 cursor-pointer">
+                  <h3 className="text-lg font-bold">{subTopic.title}</h3>
+                  <button
+                    className="bg-blue-500 text-white py-1 px-2 rounded mt-2"
+                    onClick={() => handleItemUpdate(subTopic)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="bg-red-500 text-white py-1 px-2 rounded mt-2 ml-2"
+                    onClick={() => handleItemDelete(subTopic)}
                   >
                     Delete
                   </button>
@@ -205,7 +234,8 @@ export default function TopicDetails() {
           options={[
             { id: 'notes', title: 'Notes' },
             { id: 'images', title: 'Images' },
-            { id: 'attachments', title: 'Attachments' },
+            { id: 'links', title: 'Links' },
+            { id: 'children', title: 'Sub Topics' },
           ]}
           value={selectedCategory}
           onChange={setSelectedCategory}
@@ -213,10 +243,10 @@ export default function TopicDetails() {
 
         {renderContent()}
 
-        <Link href="/topics" legacyBehavior>
-          <a className="inline-block bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
+        <Link href="/topics">
+          <div className="inline-block bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
             Back to Topics
-          </a>
+          </div>
         </Link>
       </section>
 

@@ -8,7 +8,7 @@ async function fetchAllTopics() {
       include: {
         notes: true,
         images: true,
-        attachments: true
+        links: true
       }
     });
     console.log(topics);

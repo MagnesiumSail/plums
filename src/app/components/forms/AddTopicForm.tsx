@@ -1,4 +1,6 @@
-import React, { useState, FormEvent } from 'react';
+'use client';
+
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import CustomSelect from '../CustomSelect';
 
 interface AddTopicFormProps {
@@ -50,9 +52,9 @@ const AddTopicForm: React.FC<AddTopicFormProps> = ({ topics, onSubmit }) => {
           Parent Topic
         </label>
         <CustomSelect
-          options={topics}
+          options={topics.map(topic => ({ id: topic.id, title: topic.title }))}
           value={parentId || ''}
-          onChange={(value) => setParentId(value)}
+          onChange={(value: string) => setParentId(value)}
         />
       </div>
 
