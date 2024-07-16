@@ -15,7 +15,6 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({ attachment, onSub
     if (attachment) {
       setFileName(attachment.fileName);
       setDescription(attachment.description || '');
-   
     }
   }, [attachment]);
 

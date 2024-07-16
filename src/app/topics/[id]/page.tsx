@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import CustomSelect from '../../components/CustomSelect';
 import Modal from '../../components/Modal';
+import AddImageForm from '../../components/forms/AddImageForm';
 
 export default function TopicDetails() {
   const { id } = useParams();
@@ -258,7 +259,9 @@ export default function TopicDetails() {
               <p>{selectedItem.content || selectedItem.description || ''}</p>
               {selectedItem.url && <img src={selectedItem.url} alt={selectedItem.name} className="w-full h-48 object-cover mb-2" />}
               {selectedItem.fileUrl && <a href={selectedItem.fileUrl} download className="text-blue-500 underline">{selectedItem.fileName}</a>}
-              {isEditing && (
+              {isEditing && selectedCategory === 'images' ? (
+                <AddImageForm image={selectedItem} onSubmit={handleFormSubmit} />
+              ) : (
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   handleFormSubmit(selectedItem);

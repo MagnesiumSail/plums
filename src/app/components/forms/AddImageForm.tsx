@@ -1,36 +1,45 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface AddImageFormProps {
-  onSubmit: (formData: { name: string; description: string; image: string }) => void;
   image?: any;
+  topics: { id: string; title: string }[];
+  onSubmit: (formData: { name: string; description?: string; file?: string; topicId: string }) => void;
 }
 
-const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit, image }) => {
-  const [name, setName] = useState(image?.name || '');
-  const [description, setDescription] = useState(image?.description || '');
-  const [file, setFile] = useState<string | null>(image?.url || null);
+const AddImageForm: React.FC<AddImageFormProps> = ({ image, topics = [], onSubmit }) => {
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [file, setFile] = useState<string | null>(null);
+  const [topicId, setTopicId] = useState('');
+  const [existingFileUrl, setExistingFileUrl] = useState<string | null>(null);
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFile(reader.result as string);
-    };
-    if (e.target.files && e.target.files[0]) {
-      reader.readAsDataURL(e.target.files[0]);
+  useEffect(() => {
+    if (image) {
+      setName(image.name);
+      setDescription(image.description || '');
+      setExistingFileUrl(image.url || null);
+      setTopicId(image.topicId || '');
+    }
+  }, [image]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFile(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    if (!file) {
-      alert('Please upload a file');
-      return;
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    const formData: any = { name, description, topicId };
+    if (file) {
+      formData.file = file;
     }
-    onSubmit({
-      name,
-      description,
-      image: file,
-    });
+    onSubmit(formData);
   };
 
   return (
@@ -53,22 +62,33 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ onSubmit, image }) => {
           className="w-full border border-gray-300 rounded-lg p-2"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          required
         ></textarea>
       </div>
-      <div className="mb-4">
-        <label htmlFor="file" className="block text-lg font-medium m-2">Upload Image</label>
-        <input
-          id="file"
-          type="file"
-          className="w-full border border-gray-300 rounded-lg p-2"
-          onChange={handleFileChange}
-          required
-        />
-      </div>
+      {existingFileUrl && (
+        <div className="mb-4">
+          <button
+            type="button"
+            className="w-full bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
+            onClick={() => setExistingFileUrl(null)}
+          >
+            Replace Image
+          </button>
+        </div>
+      )}
+      {!existingFileUrl && (
+        <div className="mb-4">
+          <label htmlFor="file" className="block text-lg font-medium m-2">Select Image</label>
+          <input
+            id="file"
+            type="file"
+            className="w-full border border-gray-300 rounded-lg p-2"
+            onChange={handleFileChange}
+          />
+        </div>
+      )}
       <div className="mb-4">
         <button type="submit" className="w-full bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50">
-          Save
+          {image ? 'Update Image' : 'Add Image'}
         </button>
       </div>
     </form>
