@@ -39,7 +39,7 @@ const AddAttachmentForm: React.FC<AddAttachmentFormProps> = ({ attachment, onSub
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-lg">
+    <form onSubmit={handleSubmit} className="w-full max-w-lg" encType="multipart/form-data">
       <div className="mb-4">
         <label htmlFor="fileName" className="block text-lg font-medium m-2">File Name</label>
         <input

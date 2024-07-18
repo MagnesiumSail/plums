@@ -16,17 +16,17 @@ const HomePage: React.FC = () => {
   }, [session, router]);
 
   if (loading) {
-    return <p>Loading...</p>;
+    return <p className='text-center'>Loading...</p>;
   }
 
   return (
     <main>
-      <h1 className="text-center">Welcome to Plums!!!</h1>
-      <p>We have Oranges and lemons as well.</p>
+      <h1 className="text-center text-5xl m-4">Welcome to P.L.U.M.S!!!</h1>
+      <p className='text-center text-2xl m-4'>We have Oranges and lemons as well.</p>
       {!session ? (
         <>
-          <p className="text-center">Sign in to access the app</p>
-          <div className="text-center">
+          <p className="text-center  text-2xl border-4 w-1/4 m-auto border-purple-500">Sign in to access the app</p>
+          <div className="text-center m-4">
             <button onClick={() => signIn('google')} className="btn btn-primary m-2 bg-purple-500 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded ">
               Sign in with Google
             </button>

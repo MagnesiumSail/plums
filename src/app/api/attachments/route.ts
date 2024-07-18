@@ -1,72 +1,73 @@
-import { NextRequest, NextResponse } from 'next/server';
-import multer from 'multer';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import multer from 'multer';
+import { promises as fs } from 'fs'; 
 import path from 'path';
-import fs from 'fs';
+import nextConnect from 'next-connect';
 
 const prisma = new PrismaClient();
 
-const storage = multer.memoryStorage();
+const storage = multer.diskStorage({
+  destination: path.join(process.cwd(), 'uploads'),
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  },
+});
 const upload = multer({ storage });
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
+type AttachmentData = {
+  fileName: string;
+  fileUrl: string; 
+  description?: string;
+  topicId: string;
 };
 
-export async function POST(req: NextRequest) {
-  const form = await upload.single('file');
+const handler = nextConnect<NextApiRequest, NextApiResponse>({
+  onError(error, req, res) {
+    res.status(500).json({ error: `Sorry something happened! ${error.message}` });
+  },
+});
 
-  return new Promise((resolve, reject) => {
-    form(req as any, {} as any, async (err: any) => {
-      if (err) {
-        console.error('Error uploading file:', err);
-        return resolve(NextResponse.json({ message: 'Error uploading file', error: err.message }, { status: 500 }));
-      }
+handler.use(upload.single('file'));
 
-      const { description, topicId } = (req as any).body;
-      const file = (req as any).file;
+handler.post(async (req, res) => {
+  const { description, topicId } = req.body;
+  const file = req.file;
 
-      if (!file) {
-        console.error('No file uploaded');
-        return resolve(NextResponse.json({ message: 'No file uploaded' }, { status: 400 }));
-      }
+  if (!file) {
+    return res.status(400).json({ message: 'No file uploaded' });
+  }
 
-      console.log('Received file:', file);
-      console.log('Received description:', description);
-      console.log('Received topicId:', topicId);
+  const filename = file.filename;
+  const filePath = path.join('uploads', filename); 
 
-      const filename = `${Date.now()}-${file.originalname}`;
-      const buffer = Buffer.from(file.buffer);
-      const uploadPath = path.join(process.cwd(), 'public/uploads', filename);
+  try {
+    await fs.writeFile(filePath, file.buffer);
 
-      try {
-        await fs.promises.writeFile(uploadPath, buffer);
-        const newAttachment = await prisma.attachment.create({
-          data: {
-            fileName: file.originalname,
-            fileUrl: `/uploads/${filename}`,
-            description,
-            topicId,
-          },
-        });
+    const newAttachment: AttachmentData = {
+      fileName: file.originalname,
+      fileUrl: `/${filePath}`, 
+      description,
+      topicId,
+    };
 
-        return resolve(NextResponse.json(newAttachment, { status: 201 }));
-      } catch (error) {
-        console.error('Error creating attachment:', error);
-        return resolve(NextResponse.json({ message: 'Error creating attachment', error: error.message }, { status: 500 }));
-      }
+    const createdAttachment = await prisma.attachment.create({
+      data: newAttachment,
     });
-  });
-}
 
-export async function GET(req: NextRequest) {
+    res.status(201).json(createdAttachment);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating attachment', error: error.message });
+  }
+});
+
+handler.get(async (req, res) => {
   try {
     const attachments = await prisma.attachment.findMany();
-    return NextResponse.json(attachments);
+    res.json(attachments);
   } catch (error) {
-    console.error('Error fetching attachments:', error);
-    return NextResponse.json({ message: 'Error fetching attachments', error: error.message }, { status: 500 });
+    res.status(500).json({ message: 'Error fetching attachments', error: error.message });
   }
-}
+});
+
+export default handler;
