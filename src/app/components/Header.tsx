@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
 import Link from 'next/link';
@@ -19,20 +19,17 @@ export default function Header() {
     const handleSignOut = () => {
         localStorage.removeItem('loggedIn');
         signOut({ callbackUrl: '/' });
-      };
+    };
 
     return (
         <nav className="bg-purple-500 p-5 flex items-center justify-between">
             <div className="flex items-center">
-            <Link href="/" legacyBehavior>
+                <Link href="/" legacyBehavior>
                     <a>
                         <Image src="/images/plums-logo.webp" alt="Logo" width={100} height={100} className="rounded-full" />
                     </a>
                 </Link>
-                <button 
-                    className="text-white lg:hidden text-2xl" 
-                    onClick={() => setIsOpen(!isOpen)}
-                >
+                <button className="text-white lg:hidden text-2xl" onClick={() => setIsOpen(!isOpen)}>
                     {isOpen ? '✕' : '☰'}
                 </button>
             </div>
@@ -42,7 +39,7 @@ export default function Header() {
                         <Link href={item.href} className="p-5">{item.label}</Link>
                     </li>
                 ))}
-                {!status.loading && session && (
+                {status !== 'loading' && session && (
                     <li className={`hover:text-black hover:border-black p-2 ${isOpen ? 'border-b-2 text-center mb-2 border-2 w-1/3 mx-auto' : 'border-2'}`}>
                         <h1 className='flex items-center'><button onClick={handleSignOut} className="text-inherit">Sign Out</button> : <span className="ml-2 text-inherit">{session?.user?.name}</span></h1>
                     </li>
@@ -51,6 +48,3 @@ export default function Header() {
         </nav>
     );
 }
-
-
-
