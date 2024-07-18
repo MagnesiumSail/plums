@@ -18,7 +18,7 @@ const Footer: React.FC = () => {
 
     return (
         <footer className='bg-purple-500 p-2 text-white text-center'>
-            <p>&copy;<span id="currentyear"></span> Kordell Farley + Indiana Brown / BYU - Idaho</p>
+            <p>&copy;<span id="currentyear"></span> Kordell Farley / BYU - Idaho</p>
             <p><span id="lastModified"></span></p>
         </footer>
     );
