@@ -8,20 +8,20 @@ datasource db {
 }
 
 model Topic {
-  id          String   @id @default(cuid()) @map("_id")
-  title       String
-  description String?
-  parentId    String?  @map("parent_id")
-  parent      Topic?   @relation("SubTopics", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children    Topic[]  @relation("SubTopics")
-
-  notes       Note[]
-  images      Image[]
+  id        String   @id @default(cuid()) @map("_id")
+  title     String
+  description String
+  topicId   String  
+  parent    Topic?  @relation("TopicToTopic", fields: [topicId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children  Topic[]  @relation("TopicToTopic")
+  notes      Note[]
+  images     Image[]
+  links      Link[]
   attachments Attachment[]
-  links       Link[]
 
   @@map("topics")
 }
+
 
 model Note {
   id       String @id @default(cuid()) @map("_id")
