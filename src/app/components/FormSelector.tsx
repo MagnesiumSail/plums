@@ -79,9 +79,9 @@ const FormSelector: React.FC = () => {
       case 'addLink':
         return <AddLinkForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       case 'addImage':
-        return <AddImageForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
+        return <AddImageForm topics={topics} onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       case 'addAttachment':
-        return <AddAttachmentForm onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
+        return <AddAttachmentForm topicId={selectedTopicId} onSubmit={(formData) => handleFormSubmit(formData, selectedTopicId)} />;
       default:
         return null;
     }
