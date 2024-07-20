@@ -43,7 +43,7 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ image, topics = [], onSubmi
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-lg">
+    <form onSubmit={handleSubmit}>
       <div className="mb-4">
         <label htmlFor="name" className="block text-lg font-medium m-2">Name</label>
         <input
@@ -62,10 +62,13 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ image, topics = [], onSubmi
           className="w-full border border-gray-300 rounded-lg p-2"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          required
         ></textarea>
       </div>
       {existingFileUrl && (
         <div className="mb-4">
+          <label className="block text-lg font-medium m-2">Current Image</label>
+          <img src={existingFileUrl} alt="Current Image" className="w-full h-48 object-cover mb-2" />
           <button
             type="button"
             className="w-full bg-purple-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-opacity-50"
@@ -83,6 +86,7 @@ const AddImageForm: React.FC<AddImageFormProps> = ({ image, topics = [], onSubmi
             type="file"
             className="w-full border border-gray-300 rounded-lg p-2"
             onChange={handleFileChange}
+            required={!existingFileUrl}
           />
         </div>
       )}
