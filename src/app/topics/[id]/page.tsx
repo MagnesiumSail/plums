@@ -22,7 +22,6 @@ export default function TopicDetails() {
       const response = await fetch(`/api/topics/${id}`);
       if (response.ok) {
         const data = await response.json();
-        console.log('Fetched topic:', data); 
         setTopic(data);
       } else {
         console.error('Failed to fetch topic');
@@ -64,7 +63,6 @@ export default function TopicDetails() {
       });
 
       if (response.ok) {
-        console.log('Item deleted successfully');
         setTopic(prevTopic => ({
           ...prevTopic,
           [selectedCategory]: prevTopic[selectedCategory].filter(i => i.id !== item.id),
@@ -104,6 +102,31 @@ export default function TopicDetails() {
     } catch (error) {
       console.error('Error updating item:', error);
     }
+  };
+
+  const handleTopicDelete = async () => {
+    const confirmDelete = confirm("Are you sure you want to delete this topic and all its related items?");
+    if (!confirmDelete) return;
+
+    try {
+      const response = await fetch(`/api/topics/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        router.push('/topics');
+      } else {
+        console.error('Failed to delete topic');
+      }
+    } catch (error) {
+      console.error('Error deleting topic:', error);
+    }
+  };
+
+  const handleTopicUpdate = async () => {
+    setSelectedItem(topic);
+    setIsEditing(true);
+    setIsModalOpen(true);
   };
 
   const renderContent = () => {
@@ -230,6 +253,9 @@ export default function TopicDetails() {
         <h1 className="text-2xl font-bold mb-4">{topic.title}</h1>
         <p className="mb-4">{topic.description}</p>
 
+        <button onClick={handleTopicUpdate} className="bg-blue-500 text-white py-2 px-4 rounded mr-2">Edit Topic</button>
+        <button onClick={handleTopicDelete} className="bg-red-500 text-white py-2 px-4 rounded">Delete Topic</button>
+
         <label htmlFor="category" className="block mb-2 text-lg font-bold">Content</label>
         <CustomSelect
           options={[
@@ -259,21 +285,21 @@ export default function TopicDetails() {
               <p>{selectedItem.content || selectedItem.description || ''}</p>
               {selectedItem.url && <img src={selectedItem.url} alt={selectedItem.name} className="w-full h-48 object-cover mb-2" />}
               {selectedItem.fileUrl && <a href={selectedItem.fileUrl} download className="text-blue-500 underline">{selectedItem.fileName}</a>}
-              {isEditing && selectedCategory === 'images' ? (
-                <AddImageForm image={selectedItem} onSubmit={handleFormSubmit} />
-              ) : (
+              {isEditing ? (
                 <form onSubmit={(e) => {
                   e.preventDefault();
                   handleFormSubmit(selectedItem);
                 }}>
                   <input
                     type="text"
+                    name="title"
                     value={selectedItem.title || selectedItem.name || selectedItem.fileName}
                     onChange={(e) => setSelectedItem({ ...selectedItem, title: e.target.value })}
                     className="w-full mb-4 p-2 border border-gray-300 rounded"
                     required
                   />
                   <textarea
+                    name="description"
                     value={selectedItem.content || selectedItem.description || ''}
                     onChange={(e) => setSelectedItem({ ...selectedItem, content: e.target.value })}
                     className="w-full mb-4 p-2 border border-gray-300 rounded"
@@ -282,6 +308,8 @@ export default function TopicDetails() {
                   <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">Save</button>
                   <button type="button" className="bg-gray-500 text-white py-2 px-4 rounded ml-2" onClick={() => setIsModalOpen(false)}>Cancel</button>
                 </form>
+              ) : (
+                <AddImageForm image={selectedItem} onSubmit={handleFormSubmit} />
               )}
             </div>
           )}
